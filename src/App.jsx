@@ -25,9 +25,9 @@ function App() {
 
     const auth = getAuth(fapp)
 
-    const token = await signInWithEmailAndPassword(auth, email, pass)
+    const {user: {accessToken}} = await signInWithEmailAndPassword(auth, email, pass)
 
-    console.log('token', token)
+    console.log(accessToken)
 
   }
 
