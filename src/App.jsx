@@ -1,10 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import 'firebase/auth'
 import {initializeApp} from 'firebase/app'
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth'
 
 function App() {
+
+  const [savedTo, setSavedTo] = useState(null)
 
   const fapp = initializeApp({
     apiKey: "AIzaSyB7bV0JkTgjMgeHBSz7V7uNyIy-0s4ddWc",
@@ -27,7 +29,23 @@ function App() {
 
     const {user: {accessToken}} = await signInWithEmailAndPassword(auth, email, pass)
 
+    setSavedTo(accessToken)
+
     console.log(accessToken)
+
+  }
+
+  const cors = async () => {
+
+    if (!savedTo) throw new Error('Primero obtené un token')
+
+    fetch('https://api-mate.herokuapp.com/employees', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${savedTo}`
+      }
+    }).then((res) => res.json()).then(respo => console.log(respo))
+      .catch(e => console.log(e))
 
   }
 
@@ -36,6 +54,7 @@ function App() {
       <input id='user'/>
       <input id='pass'/>
       <button onClick={test}>TRY ME</button>
+      <button onClick={cors}>TRY CORS</button>
     </div>
   )
 }
